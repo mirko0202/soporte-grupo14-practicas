@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% from 'widgets.html' import stat_widget, habit_card, empty_state, calendar_widget %}
+
+{% block title %}Habit Tracker{% endblock %}
+
+{% block content %}
+  <section class="hero p-4 p-md-5 mb-4 rounded-4">
+    <h2 class="display-8 fw-bold">{{ summary.selected_day.strftime('%d/%m/%Y') }}</h2>
+    <div class="row align-items-center g-4">
+      <div class="col-lg-7">
+        <p class="text-uppercase text-success fw-semibold mb-2">Seguimiento sencillo</p>
+        <h1 class="display-5 fw-bold">Organiza tus habitos y síguelos </h1>
+        <p class="lead text-body-secondary mb-0">
+          Mejora tu versión de cada día y se masivo!
+        </p>
+      </div>
+      <div class="col-lg-5">
+        <div class="row g-3">
+          <div class="col-6">{{ stat_widget('Total', summary.total, 'dark') }}</div>
+          <div class="col-6">{{ stat_widget('Activos', summary.active, 'warning') }}</div>
+          <div class="col-12">{{ stat_widget('Completados', summary.completed, 'success') }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mb-2">
+    {{ calendar_widget(calendar, summary.selected_day) }}
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h2 class="h4 mb-3">Nuevo habito</h2>
+          <form method="post" class="vstack gap-3">
+            <div>
+              <label for="title" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="title" name="title" placeholder="Leer 20 minutos" required>
+            </div>
+            <div>
+              <label for="description" class="form-label">Descripcion</label>
+              <textarea class="form-control" id="description" name="description" rows="3" placeholder="Haz una descripcion corta"></textarea>
+            </div>
+            <div>
+              <label for="target_days" class="form-label">Dias objetivo</label>
+              <input type="number" class="form-control" id="target_days" name="target_days" min="1" value="7" required>
+            </div>
+            <button class="btn btn-success" type="submit">Guardar habito</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h2 class="h4 mb-0">Tus habitos</h2>
+          <span class="text-body-secondary">Dia activo: {{ summary.selected_day.strftime('%d/%m/%Y') }}</span>
+        </div>
+        <span class="text-body-secondary">{{ habits|length }} registrados</span>
+      </div>
+
+      {% if habits %}
+        {% for habit in habits %}
+          {{ habit_card(habit, summary.selected_day) }}
+        {% endfor %}
+      {% else %}
+        {{ empty_state() }}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
